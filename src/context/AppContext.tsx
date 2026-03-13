@@ -1,4 +1,4 @@
-import React, {Context, createContext, useContext} from 'react';
+import React, { Context, createContext, useContext } from 'react';
 import { Issue, AppSettings } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { defaultSettings } from '../data/defaults';
@@ -7,6 +7,7 @@ interface AppContextType {
     issues: Issue[];
     settings: AppSettings;
     userName: string;
+    onLogout: () => void;
     addIssue: (issue: Omit<Issue, 'id' | 'statusUpdatedAt'>) => void;
     updateIssue: (id: string, updates: Partial<Issue>) => void;
     deleteIssue: (id: string) => void;
@@ -15,7 +16,15 @@ interface AppContextType {
 
 const AppContext: Context<AppContextType | undefined> = createContext<AppContextType | undefined>(undefined);
 
-export function AppProvider({ children, userName }: { children: React.ReactNode; userName: string }) {
+export function AppProvider({
+    children,
+    userName,
+    onLogout,
+}: {
+    children: React.ReactNode;
+    userName: string;
+    onLogout: () => void;
+}) {
     const [settings, setSettings] = useLocalStorage<AppSettings>('issue-tracker-settings', defaultSettings);
     const [issues, setIssues] = useLocalStorage<Issue[]>('issue-tracker-issues', []);
 
@@ -64,6 +73,7 @@ export function AppProvider({ children, userName }: { children: React.ReactNode;
                 issues,
                 settings,
                 userName,
+                onLogout,
                 addIssue,
                 updateIssue,
                 deleteIssue,
