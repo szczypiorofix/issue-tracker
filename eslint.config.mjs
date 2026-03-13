@@ -1,12 +1,8 @@
-// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
-import storybook from 'eslint-plugin-storybook';
-
 // @ts-check
 import eslint from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
-import eslintSimpleSort from 'eslint-plugin-simple-import-sort';
 
 export default tseslint.config(
     {
@@ -37,9 +33,6 @@ export default tseslint.config(
         },
     },
     {
-        plugins: {
-            'simple-import-sort': eslintSimpleSort,
-        },
         rules: {
             'linebreak-style': ['error', process.env.NODE_ENV === 'prod' ? 'unix' : 'windows'],
             '@typescript-eslint/no-explicit-any': 'off',
@@ -55,28 +48,6 @@ export default tseslint.config(
                     singleQuote: true,
                 },
             ],
-            'simple-import-sort/imports': [
-                'warn',
-                {
-                    groups: [
-                        ['^@nestjs', '^\\w', 'fs', 'path'],
-                        ['^react(/.*|$)', '^@mui'],
-                        ['^@lib(/.*|$)'],
-                        ['^@utils(/.*|$)'],
-                        ['^@services(/.*|$)'],
-                        // Side effect imports.
-                        ['^\\u0000'],
-                        // Parent imports. Put `..` last.
-                        ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
-                        // Other relative imports. Put same-folder imports and `.` last.
-                        ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
-                        // Style imports.
-                        ['^.+\\.?(css)$'],
-                    ],
-                },
-            ],
-            'simple-import-sort/exports': 'error',
         },
     },
-    storybook.configs['flat/recommended'],
 );
