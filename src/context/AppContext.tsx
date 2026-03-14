@@ -9,6 +9,14 @@ const AppContext: Context<AppContextType | undefined> = createContext<AppContext
 const defaultIssues: Issues = [];
 const defaultAppSettings: AppSettings = { ...defaultSettings };
 
+function assignNewIdToIssue(issues: Array<Issue>) {
+    const maxId = issues.reduce((max, issue) => {
+        const num = parseInt(issue.id.replace('ISS-', ''), 10);
+        return num > max ? num : max;
+    }, 0);
+    return `ISS-${String(maxId + 1).padStart(6, '0')}`;
+}
+
 export function AppProvider({ children, userName, onLogout }: AppProviderProps): React.JSX.Element {
     const [settings, setSettings] = useLocalStorage<AppSettings>(
         'issue-tracker-settings',
@@ -18,7 +26,7 @@ export function AppProvider({ children, userName, onLogout }: AppProviderProps):
     const [issues, setIssues] = useLocalStorage<Issue[]>('issue-tracker-issues', defaultIssues, IssuesSchema);
 
     const addIssue = (issueData: Omit<Issue, 'id' | 'statusUpdatedAt'>) => {
-        const newId = `ISS-${String(issues.length + 1).padStart(3, '0')}`;
+        const newId = assignNewIdToIssue(issues);
         const newIssue: Issue = {
             ...issueData,
             id: newId,
