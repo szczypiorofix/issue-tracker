@@ -11,8 +11,7 @@ export function useLocalStorage<T>(
             const item = window.localStorage.getItem(key);
             if (!item) return initialValue;
 
-            const parsed = JSON.parse(item) as z.core.ParseContext<z.core.$ZodIssue>;
-
+            const parsed = JSON.parse(item) as unknown;
             const result: ZodSafeParseResult<T> = schema.safeParse(parsed);
 
             if (result.success) {
