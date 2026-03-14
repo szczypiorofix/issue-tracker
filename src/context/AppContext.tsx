@@ -2,29 +2,11 @@ import React, { Context, createContext, useContext } from 'react';
 import { Issue, AppSettings } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { defaultSettings } from '../data/defaults';
-
-interface AppContextType {
-    issues: Issue[];
-    settings: AppSettings;
-    userName: string;
-    onLogout: () => void;
-    addIssue: (issue: Omit<Issue, 'id' | 'statusUpdatedAt'>) => void;
-    updateIssue: (id: string, updates: Partial<Issue>) => void;
-    deleteIssue: (id: string) => void;
-    updateSettings: (category: keyof AppSettings, values: string[]) => void;
-}
+import { AppContextType, AppProviderProps } from './AppContext.type';
 
 const AppContext: Context<AppContextType | undefined> = createContext<AppContextType | undefined>(undefined);
 
-export function AppProvider({
-    children,
-    userName,
-    onLogout,
-}: {
-    children: React.ReactNode;
-    userName: string;
-    onLogout: () => void;
-}) {
+export function AppProvider({ children, userName, onLogout }: AppProviderProps): React.JSX.Element {
     const [settings, setSettings] = useLocalStorage<AppSettings>('issue-tracker-settings', defaultSettings);
     const [issues, setIssues] = useLocalStorage<Issue[]>('issue-tracker-issues', []);
 
@@ -56,11 +38,11 @@ export function AppProvider({
         );
     };
 
-    const deleteIssue = (id: string) => {
+    const deleteIssue = (id: string): void => {
         setIssues(issues.filter((issue) => issue.id !== id));
     };
 
-    const updateSettings = (category: keyof AppSettings, values: string[]) => {
+    const updateSettings = (category: keyof AppSettings, values: string[]): void => {
         setSettings({
             ...settings,
             [category]: values,
