@@ -1,14 +1,21 @@
 import React, { Context, createContext, useContext } from 'react';
-import { Issue, AppSettings } from '../types';
+import { AppSettings, AppSettingsSchema, Issue, Issues, IssuesSchema } from '../types';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { defaultSettings } from '../data/defaults';
 import { AppContextType, AppProviderProps } from './AppContext.type';
 
 const AppContext: Context<AppContextType | undefined> = createContext<AppContextType | undefined>(undefined);
 
+const defaultIssues: Issues = [];
+const defaultAppSettings: AppSettings = { ...defaultSettings };
+
 export function AppProvider({ children, userName, onLogout }: AppProviderProps): React.JSX.Element {
-    const [settings, setSettings] = useLocalStorage<AppSettings>('issue-tracker-settings', defaultSettings);
-    const [issues, setIssues] = useLocalStorage<Issue[]>('issue-tracker-issues', []);
+    const [settings, setSettings] = useLocalStorage<AppSettings>(
+        'issue-tracker-settings',
+        defaultAppSettings,
+        AppSettingsSchema,
+    );
+    const [issues, setIssues] = useLocalStorage<Issue[]>('issue-tracker-issues', defaultIssues, IssuesSchema);
 
     const addIssue = (issueData: Omit<Issue, 'id' | 'statusUpdatedAt'>) => {
         const newId = `ISS-${String(issues.length + 1).padStart(3, '0')}`;

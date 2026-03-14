@@ -8,7 +8,12 @@ interface MultiSelectProps {
     placeholder?: string;
 }
 
-export function MultiSelect({ options, selected, onChange, placeholder = 'Select...' }: MultiSelectProps): React.JSX.Element {
+export function MultiSelect({
+    options,
+    selected,
+    onChange,
+    placeholder = 'Select...',
+}: MultiSelectProps): React.JSX.Element {
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
