@@ -7,7 +7,7 @@ import { useLocalStorage } from './hooks/useLocalStorage';
 export function App(): React.JSX.Element {
     const [userName, setUserName] = useLocalStorage<string>('issue-tracker-user', '');
 
-    const handleLogin = (name: string) => {
+    const handleLogin = (name: string): void => {
         setUserName(name);
     };
 
