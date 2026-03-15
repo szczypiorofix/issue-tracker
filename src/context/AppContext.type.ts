@@ -1,12 +1,12 @@
 import React from 'react';
-import { AppSettings, Issue } from '../types';
+import { AppSettings, Issue, IssuePayload } from '../types';
 
 export interface AppContextType {
     issues: Issue[];
     settings: AppSettings;
     userName: string;
     onLogout: () => void;
-    addIssue: (issue: Omit<Issue, 'id' | 'statusUpdatedAt'>) => void;
+    addIssue: (issue: IssuePayload) => void;
     updateIssue: (id: string, updates: Partial<Issue>) => void;
     deleteIssue: (id: string) => void;
     updateSettings: (category: keyof AppSettings, values: string[]) => void;

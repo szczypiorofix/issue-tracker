@@ -5,17 +5,17 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAppContext } from '../context/AppContext';
-import { Issue } from '../types';
+import { Issue, IssuePayload } from '../types';
 import { MultiSelect } from './MultiSelect';
 
 const issueFormSchema = z.object({
     title: z.string().min(1, 'Title is required'),
-    description: z.string().default(''),
+    description: z.string().optional(),
     projectName: z.string().min(1, 'Project is required'),
     type: z.string(),
     priority: z.string(),
     reporter: z.string(),
-    assignees: z.array(z.string()).default([]),
+    assignees: z.array(z.string()).optional(),
     status: z.string(),
 });
 
@@ -38,6 +38,16 @@ export function IssueModal({ isOpen, onClose, issueToEdit }: IssueModalProps): R
         formState: { errors },
     } = useForm<IssueFormData>({
         resolver: zodResolver(issueFormSchema),
+        defaultValues: {
+            assignees: [],
+            description: '',
+            priority: '',
+            status: '',
+            projectName: '',
+            reporter: '',
+            type: '',
+            title: '',
+        },
     });
 
     useEffect(() => {
@@ -72,10 +82,15 @@ export function IssueModal({ isOpen, onClose, issueToEdit }: IssueModalProps): R
     }, [isOpen, issueToEdit, settings, userName, reset]);
 
     const onSubmit = (data: IssueFormData): void => {
+        const issueData: IssuePayload = {
+            ...data,
+            description: data.description ?? '',
+            assignees: data.assignees ?? [],
+        };
         if (issueToEdit) {
-            updateIssue(issueToEdit.id, data);
+            updateIssue(issueToEdit.id, issueData);
         } else {
-            addIssue(data);
+            addIssue(issueData);
         }
         onClose();
     };

@@ -18,3 +18,5 @@ export type Issue = z.infer<typeof IssueSchema>;
 export const IssuesSchema = z.array(IssueSchema);
 
 export type Issues = z.infer<typeof IssuesSchema>;
+
+export type IssuePayload = Omit<Issue, 'id' | 'statusUpdatedAt'>;
