@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { XIcon, SaveIcon } from 'lucide-react';
+import { XIcon, SaveIcon, TrashIcon } from 'lucide-react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -28,7 +28,7 @@ interface IssueModalProps {
 }
 
 export function IssueModal({ isOpen, onClose, issueToEdit }: IssueModalProps): React.JSX.Element {
-    const { settings, addIssue, updateIssue, userName } = useAppContext();
+    const { settings, addIssue, updateIssue, deleteIssue, userName } = useAppContext();
 
     const {
         register,
@@ -95,6 +95,16 @@ export function IssueModal({ isOpen, onClose, issueToEdit }: IssueModalProps): R
         onClose();
     };
 
+    const handleDelete = (): void => {
+        if (!issueToEdit) return;
+        const confirmed = window.confirm(
+            `Are you sure you want to delete issue ${issueToEdit.id} - "${issueToEdit.title}"? This action cannot be undone.`,
+        );
+        if (!confirmed) return;
+        deleteIssue(issueToEdit.id);
+        onClose();
+    };
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -129,7 +139,11 @@ export function IssueModal({ isOpen, onClose, issueToEdit }: IssueModalProps): R
                             </div>
 
                             <div className='p-6 overflow-y-auto flex-1'>
-                                <form id='issue-form' onSubmit={handleSubmit(onSubmit)} className='space-y-5'>
+                                <form
+                                    id='issue-form'
+                                    onSubmit={(e) => void handleSubmit(onSubmit)(e)}
+                                    className='space-y-5'
+                                >
                                     <div>
                                         <label
                                             htmlFor='title'
@@ -291,22 +305,36 @@ export function IssueModal({ isOpen, onClose, issueToEdit }: IssueModalProps): R
                                 </form>
                             </div>
 
-                            <div className='px-6 py-4 border-t border-slate-200 bg-slate-50 flex justify-end gap-3'>
-                                <button
-                                    type='button'
-                                    onClick={onClose}
-                                    className='px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors'
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    type='submit'
-                                    form='issue-form'
-                                    className='inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors'
-                                >
-                                    <SaveIcon className='h-4 w-4 mr-2' />
-                                    Save Issue
-                                </button>
+                            <div className='px-6 py-4 border-t border-slate-200 bg-slate-50 flex justify-between gap-3'>
+                                {issueToEdit ? (
+                                    <button
+                                        type='button'
+                                        onClick={handleDelete}
+                                        className='inline-flex items-center px-4 py-2 text-sm font-medium text-red-600 bg-white border border-red-200 rounded-md shadow-sm hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors'
+                                    >
+                                        <TrashIcon className='h-4 w-4 mr-2' />
+                                        Delete Issue
+                                    </button>
+                                ) : (
+                                    <div />
+                                )}
+                                <div className='flex gap-3'>
+                                    <button
+                                        type='button'
+                                        onClick={onClose}
+                                        className='px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors'
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type='submit'
+                                        form='issue-form'
+                                        className='inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors'
+                                    >
+                                        <SaveIcon className='h-4 w-4 mr-2' />
+                                        Save Issue
+                                    </button>
+                                </div>
                             </div>
                         </motion.div>
                     </div>
